@@ -118,11 +118,18 @@ for dtRdCnt=0.d,double(rcnt-1) do begin
 					fov_loc_full=geo_fov_loc_full, fov_loc_center=geo_fov_loc_center
 
 
-			mlatArr = (*rad_fit_info[data_index]).mlat
-			mlonArr = (*rad_fit_info[data_index]).mlon
-			glatArr = (*rad_fit_info[data_index]).glat
-			glonArr = (*rad_fit_info[data_index]).glon
-			mltArr = mlt(year, yrsec, mlonArr)
+			; we need to calculate azimuth in a different way
+			;; taken from bearing calculation in http://www.movable-type.co.uk/scripts/latlong.html
+			;; Formula:	θ = atan2( sin Δλ ⋅ cos φ2 , cos φ1 ⋅ sin φ2 − sin φ1 ⋅ cos φ2 ⋅ cos Δλ )
+			;; where	φ1,λ1 is the start point, φ2,λ2 the end point (Δλ is the difference in longitude)
+
+			radMLAT = (*rad_fit_info[data_index]).mlat*!dtor
+			radMLON = (*rad_fit_info[data_index]).mlon*!dtor
+
+
+
+
+			
 
 
 			;; get the data
@@ -140,10 +147,18 @@ for dtRdCnt=0.d,double(rcnt-1) do begin
 						currMLT = mlt(year, yrsec, fov_loc_center[1,b,r])
 						currGLat = geo_fov_loc_center[0,b,r]
 						currGlon = geo_fov_loc_center[1,b,r]
+
+						;; azimuth calc
+						slat = currMLat*!dtor
+						slon = currMlon*!dtor
+						dlon = radMLON - slon
+						newAzimMagn = atan( sin(dlon)*cos(radMLAT), cos(slat)*sin(radMLAT) - sin(slat)*cos(radMLAT)*cos(dlon) )*!radeg
+						newAzimMagn = ( ( newAzimMagn + 360. ) mod 360. ) - 180.
+
 						;; we'll also need the beam azimuth
 						currbeamAzim = rt_get_azim(radCode, b, datesel)
-						printf,1, datesel,timesel, b, r, currbeamAzim, varr[b,r], specWidArr[b,r], pwrArr[b,r], currMLat, currMlon, currMLT, currGLat, currGlon, radId, radCode, $
-	                                                                format = '(I8, I5, 2I4, 4f11.4, 5f11.4, I5, A5)'
+						printf,1, datesel,timesel, b, r, currbeamAzim, newAzimMagn, varr[b,r], specWidArr[b,r], pwrArr[b,r], currMLat, currMlon, currMLT, currGLat, currGlon, radId, radCode, $
+	                                                                format = '(I8, I5, 2I4, 5f11.4, 5f11.4, I5, A5)'
 
 					endif
 				endfor
