@@ -45,6 +45,11 @@ class LshellMap(object):
                        (abs(sapsVelsDF["vLos"]) <= self.maxcutOffLosVel)&\
                        (sapsVelsDF["spwdth"] <= self.maxcutOffspWdth)\
                        ].reset_index(drop=True)
+        # SAPS(westward) vLos are positive for positive azimuths and vice versa.
+        # filter the others out
+        self.sapsVelsDF = self.sapsVelsDF[ \
+            self.sapsVelsDF[self.fitAzmType]/self.sapsVelsDF["vLos"] > 0.\
+            ].reset_index(drop=True)
 
     def azim_chars(self):
         """
