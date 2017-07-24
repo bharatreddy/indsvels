@@ -371,8 +371,8 @@ class LshellMap(object):
         seaMap = ListedColormap(sns.color_palette("RdPu"))
         vLosSeaMap = ListedColormap(sns.color_palette("Spectral"))
         # Plot using matplotlib
-        fig1 = plt.figure()
-        ax = fig1.add_subplot(111)
+        fig = plt.figure()
+        ax = fig.add_subplot(111)
         self.sapsVelsDF.plot( kind='scatter',
               x='normMLT',
               y='MLAT',
@@ -408,4 +408,5 @@ class LshellMap(object):
                               ec=currCol, linestyle='dotted')
         figName = baseDir + "lmap-" + pandas.to_datetime(str(self.inpTime)).strftime("%Y%m%d") +\
                  "-" + pandas.to_datetime(str(self.inpTime)).strftime("%H%M") + ".pdf"
-        fig1.savefig( figName,bbox_inches='tight' )    
+        fig.savefig( figName,bbox_inches='tight' )  
+        plt.close('all')  
