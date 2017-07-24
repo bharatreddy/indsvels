@@ -27,7 +27,7 @@ if __name__ == "__main__":
             for timeSel in allTimeList:
                 print "current time--->", timeSel, fNum,"/",len(files)
                 velsDataDF = sapsObj.get_saps_scatter(timeSel)
-                lmObj = saps_lshell_vel_map.LshellMap( velsDataDF )
+                lmObj = saps_lshell_vel_map.LshellMap( velsDataDF, timeSel )
                 # get locations info for getting good fits
                 azimCharDF = lmObj.azim_chars()
                 # If no good fit is found discard and store the 

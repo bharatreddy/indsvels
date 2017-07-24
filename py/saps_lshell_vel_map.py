@@ -12,11 +12,12 @@ class LshellMap(object):
     velocities (in a DF) we
     estimate SAPS velocities.
     """
-    def __init__(self, sapsVelsDF):
+    def __init__(self, sapsVelsDF, inpTime):
         """
         Set up some constants.
         Used for fitting.
         """
+        self.inpTime = inpTime
         self.mincutOffLosVel = 50.
         self.maxcutOffLosVel = 2000.
         self.mincutOffspWdth = 100.
@@ -346,3 +347,65 @@ class LshellMap(object):
         # Merge the results from both DFs
         fitResultsDF = pandas.concat( [fitResultsDF, expFitResDF] )
         return fitResultsDF.reset_index(drop=True)
+
+    def plot_lshell_map(self, fitResultsDF,\
+             baseDir="/home/bharat/Documents/code/new-vel-data/fit-figs/"):
+        """
+        Plot the fitted velocities on a map.
+        Mostly for verification purposes!
+        """
+        import seaborn as sns
+        import matplotlib.pyplot as plt
+        from matplotlib.colors import ListedColormap
+        from matplotlib.colors import Normalize
+        # get the endpoints for plotting
+        fitResultsDF["endPtMLAT"] = numpy.round( (fitResultsDF["velSAPS"]/1000.) *\
+                                numpy.cos( numpy.deg2rad(-90-1*fitResultsDF["azimSAPS"]) ) +\
+                                fitResultsDF["mlat"], 2)
+        fitResultsDF["endPtNormMLT"] = numpy.round( (fitResultsDF["velSAPS"]/1000.) *\
+                                        numpy.sin( numpy.deg2rad(-90-1*fitResultsDF["azimSAPS"]) ) +\
+                                        fitResultsDF["normMlt"], 2)
+        # Seaborn styling
+        sns.set_style("darkgrid")
+        sns.set_context("paper")
+        seaMap = ListedColormap(sns.color_palette("RdPu"))
+        vLosSeaMap = ListedColormap(sns.color_palette("Spectral"))
+        # Plot using matplotlib
+        fig1 = plt.figure()
+        ax = fig1.add_subplot(111)
+        self.sapsVelsDF.plot( kind='scatter',
+              x='normMLT',
+              y='MLAT',
+              c='vLos',
+              s=20., cmap=vLosSeaMap, ax=ax)
+        ax.set_ylabel("MLAT")
+        ax.set_xlabel("MLT", fontsize=12)
+        ax.set_title( "Velocities" )
+        velScaleMax = 2000.
+        velScaleMin = 0.
+        colNorm = Normalize( vmin=velScaleMin, vmax=velScaleMax )
+        for frRows in fitResultsDF.iterrows():
+            # Plot Velocity vectors
+            currCol = seaMap( colNorm(frRows[1]["velSAPS"]) )
+            if frRows[1]["goodFit"]:
+                
+                ax.plot( [ frRows[1]["normMlt"] , frRows[1]["endPtNormMLT"] ],\
+                        [ frRows[1]["mlat"], frRows[1]["endPtMLAT"] ],\
+                         color=currCol ) 
+                ax.arrow( frRows[1]["normMlt"], frRows[1]["mlat"], \
+                         frRows[1]["endPtNormMLT"]-frRows[1]["normMlt"],\
+                         frRows[1]["endPtMLAT"]-frRows[1]["mlat"],\
+                             head_width=0.1, head_length=0.2, fc=currCol,\
+                              ec=currCol)
+            else:
+                ax.plot( [ frRows[1]["normMlt"] , frRows[1]["endPtNormMLT"] ],\
+                        [ frRows[1]["mlat"], frRows[1]["endPtMLAT"] ],\
+                         color=currCol, linestyle='dotted') 
+                ax.arrow( frRows[1]["normMlt"], frRows[1]["mlat"], \
+                         frRows[1]["endPtNormMLT"]-frRows[1]["normMlt"],\
+                         frRows[1]["endPtMLAT"]-frRows[1]["mlat"],\
+                             head_width=0.1, head_length=0.2, fc=currCol,\
+                              ec=currCol, linestyle='dotted')
+        figName = baseDir + "lmap-" + pandas.to_datetime(str(self.inpTime)).strftime("%Y%m%d") +\
+                 "-" + pandas.to_datetime(str(self.inpTime)).strftime("%H%M") + ".pdf"
+        fig1.savefig( figName,bbox_inches='tight' )    
