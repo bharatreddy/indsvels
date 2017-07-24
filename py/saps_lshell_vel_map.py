@@ -188,7 +188,7 @@ class LshellMap(object):
                 # Need both positive and negative azims for fitting
                 # fits without those aren't very good!
                 if ( ( dfSel[ dfSel[self.fitAzmType] > 0. ].shape[0] == 0) or\
-                    ( dfSel[ dfSel[self.fitAzmType] > 0. ].shape[0] == 0) ):
+                    ( dfSel[ dfSel[self.fitAzmType] < 0. ].shape[0] == 0) ):
                     continue
                 popt, pcov = scipy.optimize.curve_fit(self.vel_sine_func, \
                             dfSel[self.fitAzmType].T,\
@@ -345,4 +345,4 @@ class LshellMap(object):
                       + expFitResDF["normMlt"], 2)
         # Merge the results from both DFs
         fitResultsDF = pandas.concat( [fitResultsDF, expFitResDF] )
-        return fitResultsDF
+        return fitResultsDF.reset_index(drop=True)
