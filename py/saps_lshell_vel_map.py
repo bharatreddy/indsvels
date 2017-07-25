@@ -303,6 +303,9 @@ class LshellMap(object):
                         # Get the closest good fit
                         # We need closest good fit in MLT and then in MLAT.
                         delMLTsFits = sorted( [ abs(ml-x) for x in fitResultsDF["normMlt"] ] )
+                        # If the closes MLT is more than 2 MLT away discard it
+                        if min(delMLTsFits) > 2:
+                            continue
                         subMltFitDF = fitResultsDF[ \
                                 abs(fitResultsDF["normMlt"]-ml) ==\
                                  min(delMLTsFits) ]
@@ -335,17 +338,17 @@ class LshellMap(object):
         expColList = ['azimSAPS', 'azimSTD', 'delMLT', 'goodFit',\
                       'mlat', 'normMlt', 'velSAPS', 'velSTD']                
         expFitResDF = pandas.DataFrame( expFitDataTupleArr, columns=expColList )
-        # Add the endpoints too
-        expFitResDF["endPtMLAT"] = numpy.round( (\
-                    expFitResDF["velSAPS"]/1000.) * numpy.cos( \
-                    numpy.deg2rad(-90-1*expFitResDF["azimSAPS"]) ) +\
-                     expFitResDF["mlat"], 2)
-        expFitResDF["endPtNormMLT"] = numpy.round( (\
-                    expFitResDF["velSAPS"]/1000.) *\
-                     numpy.sin( numpy.deg2rad(-90-1*expFitResDF["azimSAPS"]) )\
-                      + expFitResDF["normMlt"], 2)
         # Merge the results from both DFs
         fitResultsDF = pandas.concat( [fitResultsDF, expFitResDF] )
+        # Add the endpoints too
+        fitResultsDF["endPtMLAT"] = numpy.round( (\
+                    fitResultsDF["velSAPS"]/1000.) * numpy.cos( \
+                    numpy.deg2rad(-90-1*fitResultsDF["azimSAPS"]) ) +\
+                     fitResultsDF["mlat"], 2)
+        fitResultsDF["endPtNormMLT"] = numpy.round( (\
+                    fitResultsDF["velSAPS"]/1000.) *\
+                     numpy.sin( numpy.deg2rad(-90-1*fitResultsDF["azimSAPS"]) )\
+                      + fitResultsDF["normMlt"], 2)
         return fitResultsDF.reset_index(drop=True)
 
     def plot_lshell_map(self, fitResultsDF,\
@@ -358,13 +361,6 @@ class LshellMap(object):
         import matplotlib.pyplot as plt
         from matplotlib.colors import ListedColormap
         from matplotlib.colors import Normalize
-        # get the endpoints for plotting
-        fitResultsDF["endPtMLAT"] = numpy.round( (fitResultsDF["velSAPS"]/1000.) *\
-                                numpy.cos( numpy.deg2rad(-90-1*fitResultsDF["azimSAPS"]) ) +\
-                                fitResultsDF["mlat"], 2)
-        fitResultsDF["endPtNormMLT"] = numpy.round( (fitResultsDF["velSAPS"]/1000.) *\
-                                        numpy.sin( numpy.deg2rad(-90-1*fitResultsDF["azimSAPS"]) ) +\
-                                        fitResultsDF["normMlt"], 2)
         # Seaborn styling
         sns.set_style("darkgrid")
         sns.set_context("paper")
@@ -372,15 +368,15 @@ class LshellMap(object):
         vLosSeaMap = ListedColormap(sns.color_palette("Spectral"))
         # Plot using matplotlib
         fig = plt.figure()
-        ax = fig.add_subplot(111)
+        ax1 = fig.add_subplot(211)
         self.sapsVelsDF.plot( kind='scatter',
               x='normMLT',
               y='MLAT',
               c='vLos',
-              s=20., cmap=vLosSeaMap, ax=ax)
-        ax.set_ylabel("MLAT")
-        ax.set_xlabel("MLT", fontsize=12)
-        ax.set_title( "Velocities" )
+              s=20., cmap=vLosSeaMap, ax=ax1)
+        ax1.set_ylabel("MLAT")
+        ax1.set_xlabel("MLT", fontsize=12)
+        ax1.set_title( "Velocities" )
         velScaleMax = 2000.
         velScaleMin = 0.
         colNorm = Normalize( vmin=velScaleMin, vmax=velScaleMax )
@@ -389,23 +385,33 @@ class LshellMap(object):
             currCol = seaMap( colNorm(frRows[1]["velSAPS"]) )
             if frRows[1]["goodFit"]:
                 
-                ax.plot( [ frRows[1]["normMlt"] , frRows[1]["endPtNormMLT"] ],\
+                ax1.plot( [ frRows[1]["normMlt"] , frRows[1]["endPtNormMLT"] ],\
                         [ frRows[1]["mlat"], frRows[1]["endPtMLAT"] ],\
                          color=currCol ) 
-                ax.arrow( frRows[1]["normMlt"], frRows[1]["mlat"], \
+                ax1.arrow( frRows[1]["normMlt"], frRows[1]["mlat"], \
                          frRows[1]["endPtNormMLT"]-frRows[1]["normMlt"],\
                          frRows[1]["endPtMLAT"]-frRows[1]["mlat"],\
                              head_width=0.1, head_length=0.2, fc=currCol,\
                               ec=currCol)
             else:
-                ax.plot( [ frRows[1]["normMlt"] , frRows[1]["endPtNormMLT"] ],\
+                ax1.plot( [ frRows[1]["normMlt"] , frRows[1]["endPtNormMLT"] ],\
                         [ frRows[1]["mlat"], frRows[1]["endPtMLAT"] ],\
                          color=currCol, linestyle='dotted') 
-                ax.arrow( frRows[1]["normMlt"], frRows[1]["mlat"], \
+                ax1.arrow( frRows[1]["normMlt"], frRows[1]["mlat"], \
                          frRows[1]["endPtNormMLT"]-frRows[1]["normMlt"],\
                          frRows[1]["endPtMLAT"]-frRows[1]["mlat"],\
                              head_width=0.1, head_length=0.2, fc=currCol,\
                               ec=currCol, linestyle='dotted')
+        # Plot azim
+        ax2 = fig.add_subplot(212)
+        self.sapsVelsDF.plot( kind='scatter',
+                      x='normMLT',
+                      y='MLAT',
+                      c=self.fitAzmType,
+                      s=20., cmap=seaMap, ax=ax2)
+        ax2.set_ylabel("MLAT")
+        ax2.set_xlabel("MLT", fontsize=12)
+        ax2.set_title( "Azim" )
         figName = baseDir + "lmap-" + pandas.to_datetime(str(self.inpTime)).strftime("%Y%m%d") +\
                  "-" + pandas.to_datetime(str(self.inpTime)).strftime("%H%M") + ".pdf"
         fig.savefig( figName,bbox_inches='tight' )  

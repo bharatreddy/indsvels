@@ -7,7 +7,7 @@ if __name__ == "__main__":
      # Base directory where all the files are stored
     baseDir = "/home/bharat/Documents/code/new-vel-data/veldata/"
     # Fit results output go to
-    outFitResFil = "../data/fitres.csv"
+    outFitResFil = "../data/fitres-extra.csv"
     # POES Boundary data
     inpPOESFile = "../data/processedSaps.txt"
     # create a DF with the data
@@ -16,6 +16,7 @@ if __name__ == "__main__":
     sapsDataDF["date"] = pandas.to_datetime( \
                     sapsDataDF['dateStr'] + "-" +\
                     sapsDataDF['time'], format='%Y%m%d-%H%M')
+    failedDTObjs = []
     # read data from a file
     for root, dirs, files in os.walk(baseDir):
         for fNum, fName in enumerate(files):
@@ -32,7 +33,6 @@ if __name__ == "__main__":
                 azimCharDF = lmObj.azim_chars()
                 # If no good fit is found discard and store the 
                 # datetimes in a list for reference!
-                failedDTObjs = []
                 if azimCharDF.shape[0] == 0:
                     failedDTObjs.append(timeSel)
                     print "no good azims found--->", timeSel
@@ -45,6 +45,18 @@ if __name__ == "__main__":
                     continue
                 # expand the fitting to cells with no fits
                 fitResDF = lmObj.expand_fit_results(goodFitDF)
+                # Set up a few conditions to filter out some data
+                # 1) If the number of fits is less than 5 skip
+                if fitResDF.shape[0] < 5:
+                    continue
+                # 2) number of good fits should be greater than bad one's
+                if (fitResDF[ fitResDF["goodFit"] \
+                        ].shape[0]*1./fitResDF.shape[0]) <= 0.5:
+                    continue
+                # 3) Number of unique MLTs in the fits should be greater
+                # than or equal to 3 (for example, 0, 1, 2)
+                if len( fitResDF["normMlt"].unique().tolist() ) < 3.:
+                    continue
                 # Need the datetime col as well
                 fitResDF["date"] = timeSel
                 # Append to the csvfile
