@@ -7,7 +7,7 @@ if __name__ == "__main__":
     # Base directory where all the files are stored
     baseDir = "/home/bharat/Documents/code/new-vel-data/veldata/"
     # Fit results output go to
-    outFitResFil = "../data/fitres-extra.csv"
+    outFitResFil = "../data/fitres-fin.csv"
     # POES Boundary data
     inpPOESFile = "../data/processedSaps.txt"
     # create a DF with the data

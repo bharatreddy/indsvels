@@ -19,8 +19,8 @@ class LshellMap(object):
         """
         self.inpTime = inpTime
         self.mincutOffLosVel = 50.
-        self.maxcutOffLosVel = 2000.
-        self.mincutOffspWdth = 100.
+        self.maxcutOffLosVel = 2500.
+        self.mincutOffspWdth = 10.
         self.maxcutOffspWdth = 500.
         self.cellAzmRngCutoff = 40.
         self.cellCntUniqAzimsCutoff = 5.
