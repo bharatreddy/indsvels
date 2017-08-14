@@ -7,7 +7,7 @@ sfjul, date, time, jul
 rad_fan_ids = [209, 208, 33, 207, 206, 205, 204, 32]
 
 
-losVelScale = [-900., 900.]
+losVelScale = [-800., 800.]
 hemisphere = 1.
 coords = "mlt"
 xrangePlot = [-24, 30]
@@ -25,7 +25,7 @@ ps_open, '/home/bharatr/Docs/plots/' + 'saps-vels-' + plotNameDateStr+ '.ps'
 
 
     rad_map_overlay_scan, rad_fan_ids, jul, scale=losVelScale, coords=coords, $
-				param = "velocity", AJ_filter = 1, rad_sct_flg_val=2
+				param = "velocity", AJ_filter = 1, rad_sct_flg_val=2,/ vector_scan, set_grnd=50.
 
 	rad_map_overlay_poes_bnd, date, time, coords= coords, fitline_thick=5., fitline_style=2
 
@@ -100,7 +100,7 @@ ps_open, '/home/bharatr/Docs/plots/' + 'saps-vels-' + plotNameDateStr+ '.ps'
 
 
 
-	plot_colorbar, 1., 1.5, 0.4, 0.5, /square, scale=losVelScale, parameter='velocity'
+	plot_colorbar, 1., 1.5, 0.4, 0.5, /square, scale=losVelScale, parameter='velocity',ground=50.
 
 ps_close,/no_filename
 end
