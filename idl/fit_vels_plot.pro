@@ -60,10 +60,10 @@ ps_open, '/home/bharatr/Docs/plots/' + 'saps-vels-' + plotNameDateStr+ '.ps'
 	oplot, [ stereCrdsLow[0,0], stereCrdsHigh[0,0] ], [ stereCrdsLow[0,1], stereCrdsHigh[0,1] ], thick=5.
 	oplot, [ stereCrdsLow[nElMlt-1,0], stereCrdsHigh[nElMlt-1,0] ], [ stereCrdsLow[nElMlt-1,1], stereCrdsHigh[nElMlt-1,1] ], thick=5.
 
-	latStart = 59.25
-	latEnd = 59.75
-	mltStart = -0.5
-	mltEnd = 2.5
+	latStart = 57.25
+	latEnd = 57.75
+	mltStart = 1.
+	mltEnd = 3.
 	delMlt = 0.5
 
 	nElMlt = (mltEnd-mltStart)/delMlt + 1
@@ -93,7 +93,7 @@ ps_open, '/home/bharatr/Docs/plots/' + 'saps-vels-' + plotNameDateStr+ '.ps'
 
 
 
-	stereo2 = calc_stereo_coords( 59.5, 1., /mlt )
+	stereo2 = calc_stereo_coords( 57.5, 2., /mlt )
 	stereo1 =  calc_stereo_coords( 59., 0., /mlt )
 	oplot,[ stereo1[0] ],[ stereo1[1] ], psym=7., symsize=0.5, thick=2.
 	oplot,[ stereo2[0] ],[ stereo2[1] ], psym=7., symsize=0.5, thick=2.
