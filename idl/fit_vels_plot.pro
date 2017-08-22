@@ -1,16 +1,16 @@
 pro fit_vels_plot
 
-date = 20130629
-time = 0250
+date = 20110723;20130629
+time = 0720
 sfjul, date, time, jul
 ;; plot mid lat radars only
 rad_fan_ids = [209, 208, 33, 207, 206, 205, 204, 32]
 
 
-losVelScale = [-2000., 2000.]
+losVelScale = [-200., 200.]
 hemisphere = 1.
 coords = "mlt"
-xrangePlot = [-39, 15]
+xrangePlot = [-30, 24]
 yrangePlot = [-44,10]
 symsize = 0.35
 load_usersym, /circle
@@ -30,10 +30,10 @@ ps_open, '/home/bharatr/Docs/plots/' + 'saps-vels-' + plotNameDateStr+ '.ps'
 	rad_map_overlay_poes_bnd, date, time, coords= coords, fitline_thick=5., fitline_style=2
 	rad_map_overlay_poes, date, time
 
-	latStart = 57.5
-	latEnd = 58.5
-	mltStart = -6.5
-	mltEnd = -5.5
+	latStart = 58.25
+	latEnd = 58.75
+	mltStart = -0.5
+	mltEnd = 0.5
 	delMlt = 0.5
 
 	nElMlt = (mltEnd-mltStart)/delMlt + 1
@@ -94,7 +94,7 @@ ps_open, '/home/bharatr/Docs/plots/' + 'saps-vels-' + plotNameDateStr+ '.ps'
 
 
 
-	stereo1 =  calc_stereo_coords( 58., 18., /mlt )
+	stereo1 =  calc_stereo_coords( 58.5, 0., /mlt )
 	stereo2 = calc_stereo_coords( 57.5, 2., /mlt )
 	oplot,[ stereo1[0] ],[ stereo1[1] ], psym=7., symsize=0.5, thick=2.
 	;oplot,[ stereo2[0] ],[ stereo2[1] ], psym=7., symsize=0.5, thick=2.
