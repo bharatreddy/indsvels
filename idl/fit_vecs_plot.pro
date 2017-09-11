@@ -15,10 +15,10 @@ losVelScale = [-1200., 1200.]
 hemisphere = 1.
 coords = "mlt"
 xrangePlot = [-25, 29]
-yrangePlot = [-44,-15]
+yrangePlot = [-44,10]
 factor = 300.
 fixed_length = -1
-symsize = 0.35
+symsize = 0.5
 load_usersym, /circle
 rad_load_colortable,/leicester
 
@@ -89,8 +89,6 @@ rad_fan_ids = [209, 208, 33, 207, 206, 205, 204, 32]
 
 
 
-clear_page
-set_format, /sardi
 
 
 
@@ -106,9 +104,9 @@ currSapsVelAzims = velAzimArr
 currSapsMlats = latArr
 currSapsMlts = mltArr
 
-map_plot_panel,date=date,time=time,coords=coords,/no_fill,xrange=xrangePlot, $
-    yrange=yrangePlot,/no_coast,pos=define_panel(1,1,0,0,/bar),/isotropic,grid_charsize='0.5',/north, $
-    title = string(date) + "-" + strtrim( string(time), 2), charsize = 0.5
+	map_plot_panel,date=date,time=time,coords=coords,/no_fill,xrange=xrangePlot, $
+        yrange=yrangePlot,pos=define_panel(1,1,0,0,/bar),/isotropic,grid_charsize='0.5',/north, $
+        title = string(date) + "-" + strtrim( string(time), 2), charsize = 0.5
 
 
 ;rad_map_overlay_scan, rad_fan_ids, currSapsJul, scale=losVelScale, coords=coords, $
@@ -171,7 +169,7 @@ for vcnt=0,n_elements(currSapsVelMagns)-1 do begin
 
 endfor
 
-plot_colorbar, 1., 1.65, 0.4, 0.5, /square, scale=velScale, parameter='power', legend="Velocity [m/s]"
+plot_colorbar, 1., 1.45, 0.65, 0.5, /square, scale=velScale, parameter='power', legend="Velocity [m/s]"
 
 
 ps_close,/no_filename

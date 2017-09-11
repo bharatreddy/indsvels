@@ -7,7 +7,7 @@ sfjul, date, time, jul
 rad_fan_ids = [209, 208, 33, 207, 206, 205, 204, 32]
 
 
-losVelScale = [-200., 200.]
+losVelScale = [-800., 800.]
 hemisphere = 1.
 coords = "mlt"
 xrangePlot = [-25, 29]
@@ -24,13 +24,7 @@ ps_open, '/home/bharatr/Docs/plots/' + 'saps-vels-' + plotNameDateStr+ '-grid.ps
         title = string(date) + "-" + strtrim( string(time), 2), charsize = 0.5
 
 
-    rad_map_overlay_scan, rad_fan_ids, jul, scale=losVelScale, coords=coords, $
-				param = "velocity", AJ_filter = 1, rad_sct_flg_val=2,/ vector_scan;, set_grnd=50.
-
-	rad_map_overlay_poes_bnd, date, time, coords= coords, fitline_thick=5., fitline_style=2
-	;rad_map_overlay_poes, date, time
-
-
+    
 	gridMlatArr = [ 57., 57.5, 58., 58.5, 59., 59.5, 60., 60.5, 61. ]
 	gridMltArr = [ -2., -1., 0., 1., 2., 2.5, 3. ]
 
@@ -77,6 +71,13 @@ ps_open, '/home/bharatr/Docs/plots/' + 'saps-vels-' + plotNameDateStr+ '-grid.ps
 
 		endfor
 	endfor
+
+	rad_map_overlay_scan, rad_fan_ids, jul, scale=losVelScale, coords=coords, $
+				param = "velocity", AJ_filter = 1, rad_sct_flg_val=2,/ vector_scan;, set_grnd=50.
+
+	rad_map_overlay_poes_bnd, date, time, coords= coords, fitline_thick=5., fitline_style=2
+	;rad_map_overlay_poes, date, time
+
 
 	
 	plot_colorbar, 1., 1.5, 0.4, 0.5, /square, scale=losVelScale, parameter='velocity';,ground=50.
