@@ -79,7 +79,88 @@ ps_open, '/home/bharatr/Docs/plots/' + 'saps-vels-' + plotNameDateStr+ '-grid.ps
 	;rad_map_overlay_poes, date, time
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+latStart = 58.25
+	latEnd = 58.75
+	mltStart = -0.5
+	mltEnd = 0.5
+	delMlt = 0.5
+
+	nElMlt = (mltEnd-mltStart)/delMlt + 1
+
+	stereCrdsLow = fltarr( nElMlt, 2 )
+	stereCrdsHigh = fltarr( nElMlt, 2 )
+
+	for iMlt = 0, nElMlt-1 do begin
+		currMlt = mltStart + iMlt*delMlt
+		if currMlt lt 0. then currMlt += 24.
+		stcLow = calc_stereo_coords( latStart, currMlt, /mlt )
+		stcHigh = calc_stereo_coords( latEnd, currMlt, /mlt )
+		stereCrdsLow[iMlt,0] = stcLow[0]
+		stereCrdsLow[iMlt,1] = stcLow[1]
+		stereCrdsHigh[iMlt,0] = stcHigh[0]
+		stereCrdsHigh[iMlt,1] = stcHigh[1]
+
+		
+
+	endfor
+
+	oplot, [ stereCrdsLow[*,0] ], [ stereCrdsLow[*,1] ], thick=5., color=get_red()
+	oplot, [ stereCrdsHigh[*,0] ], [ stereCrdsHigh[*,1] ], thick=5., color=get_red()
+
+	oplot, [ stereCrdsLow[0,0], stereCrdsHigh[0,0] ], [ stereCrdsLow[0,1], stereCrdsHigh[0,1] ], thick=5., color=get_red()
+	oplot, [ stereCrdsLow[nElMlt-1,0], stereCrdsHigh[nElMlt-1,0] ], [ stereCrdsLow[nElMlt-1,1], stereCrdsHigh[nElMlt-1,1] ], thick=5., color=get_red()
+
+	latStart = 57.25
+	latEnd = 57.75
+	mltStart = 1.
+	mltEnd = 3.
+	delMlt = 0.5
+
+	nElMlt = (mltEnd-mltStart)/delMlt + 1
+
+	stereCrdsLow = fltarr( nElMlt, 2 )
+	stereCrdsHigh = fltarr( nElMlt, 2 )
+
+	for iMlt = 0, nElMlt-1 do begin
+		currMlt = mltStart + iMlt*delMlt
+		if currMlt lt 0. then currMlt += 24.
+		stcLow = calc_stereo_coords( latStart, currMlt, /mlt )
+		stcHigh = calc_stereo_coords( latEnd, currMlt, /mlt )
+		stereCrdsLow[iMlt,0] = stcLow[0]
+		stereCrdsLow[iMlt,1] = stcLow[1]
+		stereCrdsHigh[iMlt,0] = stcHigh[0]
+		stereCrdsHigh[iMlt,1] = stcHigh[1]
+
+		
+
+	endfor
+
+	oplot, [ stereCrdsLow[*,0] ], [ stereCrdsLow[*,1] ], thick=5., color=get_red()
+	oplot, [ stereCrdsHigh[*,0] ], [ stereCrdsHigh[*,1] ], thick=5., color=get_red()
+
+	oplot, [ stereCrdsLow[0,0], stereCrdsHigh[0,0] ], [ stereCrdsLow[0,1], stereCrdsHigh[0,1] ], thick=5., color=get_red()
+	oplot, [ stereCrdsLow[nElMlt-1,0], stereCrdsHigh[nElMlt-1,0] ], [ stereCrdsLow[nElMlt-1,1], stereCrdsHigh[nElMlt-1,1] ], thick=5., color=get_red()
+
 	
+stereo1 =  calc_stereo_coords( 58.5, 0., /mlt )
+	stereo2 = calc_stereo_coords( 57.5, 2., /mlt )
+	oplot,[ stereo1[0] ],[ stereo1[1] ], psym=7., symsize=0.5, thick=2., color=get_red()
+	oplot,[ stereo2[0] ],[ stereo2[1] ], psym=7., symsize=0.5, thick=2., color=get_red()
+
 	plot_colorbar, 1., 1.5, 0.4, 0.5, /square, scale=losVelScale, parameter='velocity';,ground=50.
 
 ps_close,/no_filename

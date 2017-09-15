@@ -4,10 +4,10 @@ pro fit_vecs_plot
 common radarinfo
 common rad_data_blk
 
-fNameSapsVels = "/home/bharatr/Docs/data/fitResTest.txt"
+fNameSapsVels = "/home/bharatr/Docs/data/fit-res-20150409-7UT.txt"
 
-date = 20110409
-time = 0840
+date = 20150409
+time = 0700
 
 ; some default settings
 velScale = [0., 1200.]
@@ -38,8 +38,9 @@ OPENR, 1, fNameSapsVels
 WHILE not eof(1) do begin
 	;; read the data line by line
 
-	READF,1, mlat, normMLT, velAzim, velMagn, gFit
+	READF,1, mlat, normMLT, velAzim, velMagn
 	
+	gFit = 0
 
 	if normMLT lt 0. then begin
 		currMLT = normMLT + 24.
