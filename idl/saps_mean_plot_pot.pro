@@ -11,8 +11,8 @@ load_usersym, /circle
 date = [ 20120618 ];
 time = [ 0400 ];
 ;; set plot/map parameters
-xrangePlot = [-44, 44]
-yrangePlot = [-44,30]
+xrangePlot = [-25, 29]
+yrangePlot = [-41,-15]
 velScale = [0,800]
 potScale = [-40.,0.]
 cntrMinVal = 5.

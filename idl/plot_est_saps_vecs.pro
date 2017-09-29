@@ -11,16 +11,16 @@ velScale = [0., 1200.]
 losVelScale = [-800., 800.]
 hemisphere = 1.
 coords = "mlt"
-xrangePlot = [-40, 40]
-yrangePlot = [-44,20]
+xrangePlot = [-25, 29]
+yrangePlot = [-41,-15]
 factor = 300.
 fixed_length = -1
 symsize = 0.35
 load_usersym, /circle
 rad_load_colortable,/website
 
-currDate = 20150409;20150105;20130317;
-currTime = 0700;0500;2000;
+currDate = 20150105;20150409;20130317;
+currTime = 0500;0700;2000;
 
 nel_arr_all = 10000
 
@@ -46,6 +46,7 @@ WHILE not eof(1) do begin
 
 	velAzim = -90.
 	
+	print, mlat, mlon, currMLT, efield, normMLT, pot, velMagn, velAzim
 
 	;; for some reason dates are not working well! 
 	;; so doing a manual fix by adding 1. Check every time!!!

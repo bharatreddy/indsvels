@@ -4,10 +4,10 @@ pro fit_vecs_plot
 common radarinfo
 common rad_data_blk
 
-fNameSapsVels = "/home/bharatr/Docs/data/fit-res-20150409-7UT.txt"
+fNameSapsVels = "/home/bharatr/Docs/data/fitResTest.txt"
 
-date = 20150409
-time = 0700
+date = 20110409
+time = 0840
 
 ; some default settings
 velScale = [0., 1200.]
@@ -15,11 +15,10 @@ losVelScale = [-1200., 1200.]
 hemisphere = 1.
 coords = "mlt"
 xrangePlot = [-25, 29]
-yrangePlot = [-44,10]
+yrangePlot = [-41,-15]
 factor = 300.
 fixed_length = -1
 symsize = 0.5
-load_usersym, /circle
 rad_load_colortable,/leicester
 
 nel_arr_all = 10000
@@ -38,9 +37,9 @@ OPENR, 1, fNameSapsVels
 WHILE not eof(1) do begin
 	;; read the data line by line
 
-	READF,1, mlat, normMLT, velAzim, velMagn
+	READF,1, mlat, normMLT, velAzim, velMagn, gFit
 	
-	gFit = 0
+
 
 	if normMLT lt 0. then begin
 		currMLT = normMLT + 24.
@@ -157,20 +156,24 @@ for vcnt=0,n_elements(currSapsVelMagns)-1 do begin
 	
 
 	if currGfit gt 0. then begin
+
+		load_usersym, /circle
 		oplot, [x_pos_vec,new_x], [y_pos_vec,new_y],$
 				thick=2, COLOR=vec_col, noclip=0
 		oplot, [x_pos_vec], [y_pos_vec], psym=8, $
 			symsize=symsize, color=vec_col, noclip=0
 	endif else begin
+		A = FIndGen(16) * (!PI*2/16.) 
+		UserSym, cos(A), sin(A) 
 		oplot, [x_pos_vec,new_x], [y_pos_vec,new_y],$
 				thick=2, COLOR=vec_col, noclip=0
-		oplot, [x_pos_vec], [y_pos_vec], psym=2, $
+		oplot, [x_pos_vec], [y_pos_vec], psym=8, $
 			symsize=symsize, color=vec_col, noclip=0
 	endelse
 
 endfor
 
-plot_colorbar, 1., 1.45, 0.65, 0.5, /square, scale=velScale, parameter='power', legend="Velocity [m/s]"
+plot_colorbar, 1., 1.75, 0.75, 0.5, /square, scale=velScale, parameter='power', legend="Velocity [m/s]"
 
 
 ps_close,/no_filename
